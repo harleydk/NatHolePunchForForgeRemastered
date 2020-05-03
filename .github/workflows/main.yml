@@ -14,13 +14,13 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-
-    steps:
+    
+steps:
     - uses: actions/checkout@master
 
     - name: setup-msbuild
       uses: microsoft/setup-msbuild@v1
 
     - name: MSBuild
-      working-directory: src
+      working-directory: .
       run: msbuild ../NatHolePunch.csproj
