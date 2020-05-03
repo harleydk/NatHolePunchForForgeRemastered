@@ -15,12 +15,13 @@ jobs:
   build:
     runs-on: windows-latest
     
-steps:
-    - uses: actions/checkout@master
+    steps:
+      - name: checkout of master
+        uses: actions/checkout@master
 
-    - name: setup-msbuild
-      uses: microsoft/setup-msbuild@v1
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1
 
-    - name: MSBuild
-      working-directory: .
-      run: msbuild ../NatHolePunch.csproj
+      - name: MSBuild
+        working-directory: ./
+        run: msbuild ../NatHolePunch.csproj
