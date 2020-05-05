@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace NatHolePunchServer
 {
-    class NatHolePunch
+    public class NatHolePunch
     {
         private static UDPServer server = null;
         private static Dictionary<string, List<Host>> hosts = new Dictionary<string, List<Host>>();
@@ -147,7 +147,7 @@ namespace NatHolePunchServer
                 {
                     var host = hosts[address][i];
 
-                    // This host is already registered probably reconnecting so let's refresh the entry.
+                    // This host is already registered, probably reconnecting so let's refresh the entry.
                     if (host.port == port)
                     {
                         System.Console.Write("Hosted Server updated: ");

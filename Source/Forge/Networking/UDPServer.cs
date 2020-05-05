@@ -345,11 +345,14 @@ namespace BeardedManStudios.Forge.Networking
 
 					BandwidthIn += (ulong)packet.Size;
 				}
-				catch
+				catch( Exception ex)
 				{
+					Console.WriteLine($"Error in ReadClients() infinite loop, error was {ex.Message}");
+
 					UDPNetworkingPlayer player;
 					if (udpPlayers.TryGetValue(incomingEndpoint, out player))
 					{
+						Console.WriteLine($"Following the error, player '{player.NetworkId}' will be removed");
 						FinalizeRemovePlayer(player, true);
 					}
 
