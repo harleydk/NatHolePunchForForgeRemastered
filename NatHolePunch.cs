@@ -41,6 +41,9 @@ namespace NatHolePunchServer
 
                 if (json["register"] != null)
                 {
+                    // A host is coming to register with this NAT server, thus declaring itself open for business.
+                    // Remember, when the host _itself_ moves through its own firewall it signals to its operating 
+                    // system that it's safe to do traffic on that port - including _receiving_ traffic directly from clients.
                     string address = player.IPEndPointHandle.Address.ToString();
                     ushort port = json["register"]["port"].AsUShort;
 
@@ -51,9 +54,12 @@ namespace NatHolePunchServer
                         return;
 
                     RegisterNewHost(player, address, port);
+                    System.Console.WriteLine($"New host was registrered on {address}:{port}");
                 }
                 else if (json["host"] != null && json["port"] != null)
                 {
+                    // A client is coming to register with this NAT server, i.e. it's looking for a host it believes it knows about.
+                    // So let's see if we can find a suitable host for it.
                     server.Disconnect(player, false);
 
                     string addresss = json["host"];
@@ -89,6 +95,7 @@ namespace NatHolePunchServer
                     Text notifyFrame = Text.CreateFromString(server.Time.Timestep, sendObj.ToString(), false, Receivers.Target, MessageGroupIds.NAT_ROUTE_REQUEST, false);
 
                     server.Send(foundHost.player, notifyFrame, true);
+                    System.Console.WriteLine($"The client was sent info about a host - gg ahead.");
                 }
             }
             catch (Exception ex)

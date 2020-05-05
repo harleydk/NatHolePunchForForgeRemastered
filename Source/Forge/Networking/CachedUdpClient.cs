@@ -330,27 +330,37 @@ namespace BeardedManStudios.Forge.Networking
 		private Dictionary<EndPoint, string> connections = new Dictionary<EndPoint, string>();
 		public BMSByte Receive(ref IPEndPoint remoteEP, ref string endpoint)
 		{
-			CheckDisposed();
+			try
+			{
+				CheckDisposed();
+				recBuffer.Clear();
 
-			recBuffer.Clear();
+				if (endPoint == null)
+					endPoint = new IPEndPoint(IPAddress.Any, 0);
 
-			if (endPoint == null)
-				endPoint = new IPEndPoint(IPAddress.Any, 0);
+				int dataRead = socket.ReceiveFrom(recBuffer.byteArr, ref endPoint);
 
-			int dataRead = socket.ReceiveFrom(recBuffer.byteArr, ref endPoint);
+				if (!connections.ContainsKey(endPoint))
+					connections.Add(endPoint, (((IPEndPoint)endPoint).Address.ToString() + HOST_PORT_CHARACTER_SEPARATOR + ((IPEndPoint)endPoint).Port.ToString()));
 
-			if (!connections.ContainsKey(endPoint))
-				connections.Add(endPoint, (((IPEndPoint)endPoint).Address.ToString() + HOST_PORT_CHARACTER_SEPARATOR + ((IPEndPoint)endPoint).Port.ToString()));
+				endpoint = connections[endPoint];
 
-			endpoint = connections[endPoint];
+				//if (dataRead < recBuffer.Size)
+				//	recBuffer = CutArray(recBuffer, dataRead);
 
-			//if (dataRead < recBuffer.Size)
-			//	recBuffer = CutArray(recBuffer, dataRead);
+				recBuffer.SetSize(dataRead);
 
-			recBuffer.SetSize(dataRead);
-
-			remoteEP = (IPEndPoint)endPoint;
-			return recBuffer;
+				remoteEP = (IPEndPoint)endPoint;
+				return recBuffer;
+			}
+			catch (SocketException)
+			{
+				// It would not be uncommon for a socket-exception to occur in the call to socket.ReceiveFrom.
+				// This should not necessarily lead to concerns.
+				//throw;
+				return recBuffer;
+			}
+			
 		}
 
 		int DoSend(byte[] dgram, int bytes, IPEndPoint endPoint)

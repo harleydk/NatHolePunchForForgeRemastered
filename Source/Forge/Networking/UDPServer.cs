@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace BeardedManStudios.Forge.Networking
@@ -336,7 +337,6 @@ namespace BeardedManStudios.Forge.Networking
 				{
 					// Read a packet from the network
 					packet = Client.Receive(ref groupEP, ref incomingEndpoint);
-
 					if (PacketLossSimulation > 0.0f && new Random().NextDouble() <= PacketLossSimulation)
 					{
 						// Skip this message
@@ -345,7 +345,7 @@ namespace BeardedManStudios.Forge.Networking
 
 					BandwidthIn += (ulong)packet.Size;
 				}
-				catch( Exception ex)
+				catch( Exception ex ) when ( !(ex is SocketException))
 				{
 					Console.WriteLine($"Error in ReadClients() infinite loop, error was {ex.Message}");
 
